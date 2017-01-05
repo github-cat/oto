@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:elasticsearch="http://www.springframework.org/schema/data/elasticsearch"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/data/elasticsearch
+	http://www.springframework.org/schema/data/elasticsearch/spring-elasticsearch.xsd">
+  
+    
+   <elasticsearch:transport-client id="client" cluster-name="${elasticsearch.cluster.name}" cluster-nodes="${elasticsearch.esNodes}"/>
+
+    <bean name="elasticsearchTemplate" class="org.springframework.data.elasticsearch.core.ElasticsearchTemplate">
+        <constructor-arg name="client" ref="client"/>
+    </bean>
+  
+    <bean name="elasticsearchService" class="com.changhong.framework.elasticsearch.heros.service.ElasticsearchService"  
+       init-method="init" />  
+  
+    <bean name="es" class="com.changhong.framework.elasticsearch.spring.service.ElasticsearchService"></bean>  
+    
+    <elasticsearch:repositories base-package="com.changhong.framework.elasticsearch.spring.data.repositoriesr" />
+</beans>

@@ -1,0 +1,14 @@
+<beans	 xmlns="http://www.springframework.org/schema/beans"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:context="http://www.springframework.org/schema/context"
+           xsi:schemaLocation="
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+     <!-- 引入属性文件jdpc.porperties -->
+     <!-- classpath指向的classes里放的东西，我们再来看看classpath: 和classpath*:的区别
+     1.classpath：只会到你的classes路径中查找找文件
+     2.classpath*：不仅会到classes路径，还包括jar文件中(classes路径)进行查找
+      -->
+	<context:property-placeholder location="classpath:config/*.properties" />
+</beans>			

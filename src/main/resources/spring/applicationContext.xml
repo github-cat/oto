@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-4.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
+	    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd
+	    http://code.alibabatech.com/schema/dubbo
+        http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
+	default-lazy-init="true">
+
+	<description>Spring公共配置</description>
+	
+	<!-- 导入其他配置文件，导入文件必须放在配置文件的最前面 -->
+	<import resource="classpath:common/common-context.xml"></import>
+
+	<!-- redis基础配置 -->
+	<import resource="classpath:redis/redis-common-context.xml"></import>
+	<!-- <import resource="classpath:redis/redis-session-context.xml"></import> -->
+	<!-- <import resource="classpath:email/spring-email.xml"></import>
+	<import resource="classpath:redis/redis-cache-context.xml"></import> -->
+
+
+	<!-- 扫描，这里需要排除掉@Controller注解 -->
+	<context:component-scan base-package="com.changhong">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller" />
+	</context:component-scan>
+
+	<!-- 启动对@AspectJ注解的支持 -->
+	<!--通知spring使用cglib而不是jdk的来生成代理方法 AOP可以拦截到Controller -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<!-- 数据库连接池 -->
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="driverClassName" value="${jdbc.driver}" />
+	</bean>
+	
+	<!-- 事务配置 -->
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
+	<!-- 使用annotation定义事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"
+		proxy-target-class="true" />
+		
+		
+	<!-- <task:annotation-driven /> -->
+	
+	<!-- <bean id="tService"
+              class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+              <property name="serviceUrl"
+                     value="http://localhost:8888/service-web/api/service/iTokenService" />
+              <property name="serviceInterface" value="com.changhong.framework.common.service.token.ITokenService" />
+    </bean> -->
+</beans>

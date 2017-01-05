@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/context 
+	   http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- NOTE Shiro-redis don't support SimpleAuthenticationInfo created by 
+		this constructor org.apache.shiro.authc.SimpleAuthenticationInfo.SimpleAuthenticationInfo(Object 
+		principal, Object hashedCredentials, ByteSource credentialsSalt, String realmName). 
+		Please use org.apache.shiro.authc.SimpleAuthenticationInfo.SimpleAuthenticationInfo(Object 
+		principal, Object hashedCredentials, String realmName) instead. -->
+
+	<context:property-placeholder
+		location="classpath:config/shiro-credentials.properties" /><!-- 加载配置文件 -->
+	<!-- 缓存：缓存管理器（shiro这里也是用了ehcache缓存管理器） -->
+	<!-- <bean id="cacheManager" class="com.changhong.framework.common.utils.cache.SpringCacheManagerWrapper"> 
+		<property name="cacheManager" ref="springCacheManager"/>引用了ehcache缓存管理器 </bean> -->
+
+	<bean id="redisManager" class="org.crazycake.shiro.RedisManager">
+		<property name="host" value="127.0.0.1" />
+		<property name="port" value="6379" />
+		<property name="expire" value="1800" />
+		<!-- optional properties: <property name="timeout" value="10000"/> <property 
+			name="password" value="123456"/> -->
+	</bean>
+
+	<bean id="cacheManager" class="org.crazycake.shiro.RedisCacheManager">
+		<property name="redisManager" ref="redisManager" />
+	</bean>
+
+	<!-- 凭证匹配器:默认的匹配器，保存密码是是否怎么加密的，则匹配时，则必须按照同样的规则加密，再匹配 -->
+	<bean id="credentialsMatcher"
+		class="com.changhong.oto.common.utils.shiro.RetryLimitHashedCredentialsMatcher">
+		<constructor-arg ref="cacheManager" />				<!-- 引用了ehcache缓存管理器 -->
+		<property name="hashAlgorithmName" value="${password.algorithmName}" />	<!-- MD5算法 -->
+		<property name="hashIterations" value="${password.hashIterations}" />	<!-- 迭代2次加密 -->
+		<property name="storedCredentialsHexEncoded" value="true" /><!-- 
+			表示是否需要将加密后的密码进行16进制编码(需要和生成密码时的一样，默认是base64) -->
+	</bean>
+
+	<!-- Realm实现 -->
+	<bean id="userRealm" class="com.changhong.oto.common.utils.shiro.UserRealm">
+		<property name="credentialsMatcher" ref="credentialsMatcher" />
+		<property name="cachingEnabled" value="false" /><!-- 是否启用缓存：默认false（原因：用户名和密码随时都可能修改，不推荐使用缓存） -->
+		<!--<property name="authenticationCachingEnabled" value="true"/> --><!-- 是否启用权限认证缓存：默认false（原因：以上同理） -->
+		<!--<property name="authenticationCacheName" value="authenticationCache"/> --><!-- 权限认证缓存：命名（放在什么地方） -->
+		<!--<property name="authorizationCachingEnabled" value="true"/> --><!-- 是否启用身份认证缓存：默认false（原因：以上同理） -->
+		<!--<property name="authorizationCacheName" value="authorizationCache"/> --><!-- 身份认证缓存：命名（放在什么地方） -->
+	</bean>
+
+	<!-- 会话ID生成器 ：规则生成一个JSESSIONID值（如：JSESSIONID=e882cb08-b82f-4325-8648-99c1a0bd0fc1） -->
+	<bean id="sessionIdGenerator"
+		class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator" />
+
+	<!-- 会话Cookie模板 ：JSESSIONID -->
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="sid" /><!-- 构造参数:传入给cookie定义的名称 -->
+		<property name="httpOnly" value="true" /><!-- 可实现某些类型的跨站点XSS脚本攻击 -->
+		<property name="maxAge" value="-1" /><!-- -1不设置过期时间，默认随浏览器关掉而失效 -->
+	</bean>
+	<!-- 会话Cookie模板 ：记住我 -->
+	<bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg value="rememberMe" /><!-- 构造参数:传入给cookie定义的名称 -->
+		<property name="httpOnly" value="true" /><!-- 可实现某些类型的跨站点XSS脚本攻击 -->
+		<property name="maxAge" value="2592000" /><!-- 30天 -->
+	</bean>
+
+	<!-- rememberMe管理器 -->
+	<bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">
+		<!-- rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度（128 256 512 位） -->
+		<property name="cipherKey"
+			value="#{T(org.apache.shiro.codec.Base64).decode('4AvVhmFLUs0KTA3Kprsdag==')}" />
+		<property name="cookie" ref="rememberMeCookie" /> <!-- 引用记住我cookie模板 -->
+	</bean>
+
+	<!-- 会话DAO （针对session进行持久化操作（默认持久化到ehcache缓存中），若要持久化到数据库自己实现sessionDAO中doCreate/doUpdate/doDelete/doReadSession方法即可） -->
+	<!-- <bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO"> -->
+	<!-- <property name="activeSessionsCacheName" value="shiro-activeSessionCache"/> -->	<!-- 缓存命名 -->
+	<bean id="sessionDAO" class="com.changhong.oto.common.utils.shiro.RedisSessionDao">
+		<property name="sessionIdGenerator" ref="sessionIdGenerator" />  			<!-- sessionid生成策略 -->
+		<!-- <property name="cacheManager" ref="cacheManager"/> -->						<!-- 默认的引用：cacheManager -->
+	</bean>
+
+	<!-- redisSessionDAO -->
+	<bean id="redisSessionDAO" class="org.crazycake.shiro.RedisSessionDAO">
+		<property name="sessionIdGenerator" ref="sessionIdGenerator" />
+		<property name="redisManager" ref="redisManager" />
+	</bean>
+
+
+
+	<!-- 会话管理器 (DefaultWebSessionManager自己维护着会话，直接废弃了Servlet容器的会话管理) -->
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.ServletContainerSessionManager">
+	</bean>
+
+	<!-- 安全管理器：数据源 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="userRealm" />					<!-- 1.域：数据源 （必须有：原因，权限认证和身份认证只有自己知道） -->
+		<property name="sessionManager" ref="sessionManager" />		<!-- 2.会话管理器：自定义会话管理，则必须有 -->
+		<property name="cacheManager" ref="cacheManager" />			<!-- 3.缓存管理器：很多数据存储是需要缓存的支持 -->
+		<property name="rememberMeManager" ref="rememberMeManager" /><!-- 
+			4.记住我：可选，shiro提供了记住我的功能 -->
+	</bean>
+
+	<!-- SecurityUtils工具类：shiro默认提供了一个工具类对SecurityManager进行管理操作[相当于调用SecurityUtils.setSecurityManager(securityManager)] -->
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="staticMethod"
+			value="org.apache.shiro.SecurityUtils.setSecurityManager" />
+		<property name="arguments" ref="securityManager" />
+	</bean>
+
+	<!-- 基于Form表单的身份验证过滤器(功能:1.记住访问url地址,身份认证通过以后，回访这个uil;2.记住我自动登录的功能的支持) -->
+	<bean id="formAuthenticationFilter"
+		class="org.apache.shiro.web.filter.authc.FormAuthenticationFilter">
+		<property name="usernameParam" value="username" />
+		<property name="passwordParam" value="password" />
+		<property name="rememberMeParam" value="rememberMe" />
+	</bean>
+	<!-- 自定义一个过滤器：将在请求url方法前通过自定义注解@currentUser将登陆用户对象封装到参数中 -->
+	<!-- <bean id="sysUserFilter" class="system.shiro.filter.SysUserFilter"/> -->
+
+	<!-- Shiro的Web过滤器 -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login.do" />
+		<property name="successUrl" value="/index.do" /> <!--默认/,可以指定可以不指定，不指定则/，也就是web.xml中<welcome-file-list> -->
+		<property name="filters">
+			<util:map>
+				<entry key="authc" value-ref="formAuthenticationFilter" />
+				<!-- <entry key="sysUser" value-ref="sysUserFilter"/> -->
+			</util:map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/login.do = authc
+				/static/** = anon
+				/logout = logout
+				/authenticated = authc
+				/web/** = anon
+			</value>
+		</property>
+	</bean>
+
+	<!--与cas集成的部分 -->
+
+	<bean id="casFilter" class="org.apache.shiro.cas.CasFilter">
+		<!--配置验证错误时的失败页面（Ticket 校验不通过时展示的错误页面） -->
+		<property name = "failureUrl" value="/page/error.jsp" />
+	</bean>
+	
+	<bean id="casSubjectFactory" class="org.apache.shiro.cas.CasSubjectFactory"/> 
+
+		<!-- Shiro生命周期处理器 -->
+		<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />
+
+		<bean name="shiroAdvisor"
+			class="com.changhong.oto.common.utils.shiro.aop.AopAllianceAnnotationsAuthorizingMethodInterceptor"
+			depends-on="lifecycleBeanPostProcessor" />
+
+</beans>

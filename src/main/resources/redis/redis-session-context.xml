@@ -1,0 +1,36 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+      http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+	<!-- scanner redis properties -->
+	<context:annotation-config />
+
+	<!-- 配置spring-session -->
+	<!-- spring-session中间件需要依赖redis2.8.0以上版本，并且需要开启：notify-keyspace-events gxE -->
+	<bean
+		class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+		<!-- 过期时间60分钟 -->
+		<property name="maxInactiveIntervalInSeconds" value="3600"></property>
+	</bean>
+
+	<bean id="connectionFactory"
+		class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory"
+		p:hostName="${redis.host}" p:port="${redis.port}" p:password="${redis.pass}"
+		p:poolConfig-ref="poolConfig" />
+
+	<!-- <util:properties id="redis" location="classpath:redis-cluster.properties"></util:properties> -->
+	
+	<bean id="redisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate">
+		<property name="connectionFactory" ref="connectionFactory" />
+	</bean>
+
+	<bean class="org.springframework.session.web.http.DefaultCookieSerializer">
+		<property name="cookieName" value="JSESSIONID"></property>
+		<!-- <property name="cookiePath" value="/o2o/"></property> -->
+		<!-- <property name="domainName" value="example.com"></property> -->
+		<property name="domainNamePattern" value="^.+?\.(\w+\.[a-z]+)$"></property>
+	</bean>
+
+</beans>			

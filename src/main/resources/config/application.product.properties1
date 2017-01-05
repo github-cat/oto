@@ -1,0 +1,41 @@
+#h2 database settings
+jdbc.driver=com.mysql.jdbc.Driver
+#jdbc.url=jdbc\:mysql\://10.3.30.5\:3306/mei?characterEncoding\=utf-8
+jdbc.url=jdbc\:mysql\://10.3.30.80/TouchCDB?useUnicode\=true&characterEncoding\=utf-8&zeroDateTimeBehavior\=convertToNull
+#jdbc.username=root
+#jdbc.password=admin
+jdbc.username=mysql
+jdbc.password=touchcmysql
+
+#log4jdbc driver
+#jdbc.driver=net.sf.log4jdbc.DriverSpy
+#jdbc.url=jdbc:log4jdbc:h2:file:~/.h2/mei4;AUTO_SERVER=TRUE
+
+quartz.jdbc.driver=com.mysql.jdbc.Driver
+quartz.jdbc.url=jdbc\:mysql\://10.3.30.80/TouchCDB?useUnicode\=true&characterEncoding\=utf-8&zeroDateTimeBehavior\=convertToNull
+quartz.jdbc.username=mysql
+quartz.jdbc.password=touchcmysql
+
+#activemq settings
+#vm broker
+jms.broker_url=vm://mei?broker.persistent=false&broker.useJmx=false&broker.schedulerSupport=false
+#localhost broker
+#jms.broker_url=tcp://localhost:61616
+#network of brokers
+#jms.broker_url=failover://(tcp://mqremote1:61616,tcp://mqremote2:61616)?randomize=false&initialReconnectDelay=100&timeout=5000
+
+jms.clicent_id=durableTopicListenerDemo
+
+#memcached settings
+memcached.url=localhost:11211
+
+#jmx settings
+jmx.rmi_port=2099
+
+#demo settings
+server.node_name=default
+server.addr=localhost
+
+#ip
+ipDataUrl=qqwry.dat
+
