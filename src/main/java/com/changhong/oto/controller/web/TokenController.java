@@ -27,4 +27,10 @@ public class TokenController {
 		AjaxResult ajaxResult = new AjaxResult("正常返回", "正常返回");
 		return ajaxResult;
 	}
+	
+	
+	@RequestMapping(value = "/index")
+	public String index() {
+		return "index";
+	}
 }

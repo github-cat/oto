@@ -26,6 +26,7 @@
 	<!-- <import resource="classpath:redis/redis-session-context.xml"></import> -->
 	<!-- <import resource="classpath:email/spring-email.xml"></import>
 	<import resource="classpath:redis/redis-cache-context.xml"></import> -->
+	<import resource="classpath:i18n/i18n-context.xml"></import>
 
 
 	<!-- 扫描，这里需要排除掉@Controller注解 -->
