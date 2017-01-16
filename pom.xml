@@ -394,11 +394,11 @@
 			<artifactId>core</artifactId>
 			<version>${zxing.core.version}</version>
 		</dependency>
-		 <dependency>  
-	        <groupId>com.google.zxing</groupId>  
-	        <artifactId>javase</artifactId>  
-	        <version>${zxing.core.version}</version>  
-    	</dependency>
+		<dependency>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>${zxing.core.version}</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/net.sf.jacob-project/jacob -->
 		<!-- jacob用于调用COM组件和Win32程序库 -->
 		<dependency>
@@ -521,7 +521,7 @@
 			<artifactId>jafka</artifactId>
 			<version>${jafka.version}</version>
 		</dependency>
-		
+
 		<!--安全加密 -->
 		<dependency>
 			<groupId>com.changhong</groupId>
@@ -530,31 +530,39 @@
 			<scope>system</scope>
 			<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/cacsdk-out.jar</systemPath>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.apache.ant</groupId>
-		    <artifactId>ant</artifactId>
-		    <version>${ant.version}</version>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>${ant.version}</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>com.belerweb</groupId>
-		    <artifactId>pinyin4j</artifactId>
-		    <version>${pinyin.version}</version>
+			<groupId>com.belerweb</groupId>
+			<artifactId>pinyin4j</artifactId>
+			<version>${pinyin.version}</version>
 		</dependency>
-		
-		
+
+
 		<!-- 轻量级高性能表达式计算框架 -->
 		<dependency>
-		    <groupId>com.googlecode.aviator</groupId>
-		    <artifactId>aviator</artifactId>
-		    <version>${aviator.version}</version>
+			<groupId>com.googlecode.aviator</groupId>
+			<artifactId>aviator</artifactId>
+			<version>${aviator.version}</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.mockito</groupId>
-		    <artifactId>mockito-core</artifactId>
-		    <version>${mockito-core.version}</version>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito-core.version}</version>
+		</dependency>
+
+		<!-- 邮件 -->
+		<!-- https://mvnrepository.com/artifact/javax.mail/mail -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.5.0-b01</version>
 		</dependency>
 
 	</dependencies>
