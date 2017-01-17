@@ -55,21 +55,21 @@ public class SendmailUtil {
 	 */
 	public SendmailUtil(MailInfo mailInfo) {
 		
-		this.SEND_USER = mailInfo.getSEND_USER();
-		this.SEND_PWD = mailInfo.getSEND_PWD();
+		this.SEND_USER = mailInfo.getSendUser();
+		this.SEND_PWD = mailInfo.getSendPwd();
 		Properties props = System.getProperties();
 		// 设置SMTP的主机
-		props.setProperty("mail.smtp.host", mailInfo.getVALUE_SMTP());
+		props.setProperty("mail.smtp.host", mailInfo.getValueSmtp());
 		//验证用户
 		props.setProperty("mail.smtp.auth", "true");
 		//端口
-		props.setProperty("mail.smtp.port", mailInfo.getMAIL_PORT());
+		props.setProperty("mail.smtp.port", mailInfo.getMailPort());
 		// 安全协议  SSL验证
 		props.setProperty("mail.smtp.socketFactory.class","javax.net.ssl.SSLSocketFactory");
 		//只处理SSL的连接, 对于非SSL的连接不做处理
 		props.setProperty("mail.smtp.socketFactory.fallback", "false");
 		//端口
-		props.setProperty("mail.smtp.socketFactory.port",mailInfo.getMAIL_PORT());
+		props.setProperty("mail.smtp.socketFactory.port",mailInfo.getMailPort());
 		props.setProperty("mail.smtp.starttls.enable", "true");
 		//协议
 		props.setProperty("mail.transport.protocol", "smtp");
@@ -203,7 +203,7 @@ public class SendmailUtil {
 			
 			Transport transport = session.getTransport();
 			// smtp验证，就是你用来发邮件的邮箱用户名密码
-			transport.connect(mailInfo.getVALUE_SMTP(), SEND_USER, SEND_PWD);
+			transport.connect(mailInfo.getValueSmtp(), SEND_USER, SEND_PWD);
 			// 发送
 			//封装数据
 			List<Object> recipients = new ArrayList<Object>();
@@ -234,10 +234,10 @@ public class SendmailUtil {
 	
 	public static void main(String[] args) {
 		MailInfo mailInfo = new MailInfo();
-		mailInfo.setSEND_USER("xied@meyacom.com");
-		mailInfo.setSEND_PWD("Xie123456789");
-		mailInfo.setVALUE_SMTP("smtp.exmail.qq.com");
-		mailInfo.setMAIL_PORT("465");
+		mailInfo.setSendUser("xied@meyacom.com");
+		mailInfo.setSendPwd("Xie123456789");
+		mailInfo.setValueSmtp("smtp.exmail.qq.com");
+		mailInfo.setMailPort("465");
 		mailInfo.setHeadName("rrr333rr");
 		mailInfo.setSendHtml("xxxxx<br/>xxxxxx22");
 		mailInfo.setReceiveUsers("3268496966@qq.com;1@qq.com;545049376@qq.com");

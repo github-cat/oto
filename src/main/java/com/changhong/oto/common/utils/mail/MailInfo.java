@@ -6,52 +6,52 @@ import java.util.List;
 
 public class MailInfo {
 	// 设置服务器
-	private  String VALUE_SMTP;
-	private  String MAIL_PORT;
+	private  String valueSmtp;
+	private  String mailPort;
 	// 发件人用户名、密码
-	private String SEND_USER;
-	private String SEND_PWD; 
+	private String sendUser;
+	private String sendPwd; 
 	
 	public MailInfo() {}
 	
 	
-	
-	public MailInfo(String vALUE_SMTP, String mAIL_PORT, String sEND_USER,
-			String sEND_PWD) {
-		this.VALUE_SMTP = vALUE_SMTP;
-		this.MAIL_PORT = mAIL_PORT;
-		this.SEND_USER = sEND_USER;
-		this.SEND_PWD = sEND_PWD;
+	public MailInfo(String valueSmtp, String mailPort, String sendUser, String sendPwd) {
+		this.valueSmtp = valueSmtp;
+		this.mailPort = mailPort;
+		this.sendUser = sendUser;
+		this.sendPwd = sendPwd;
+	}
+
+
+	public String getValueSmtp() {
+		return valueSmtp;
+	}
+	public void setValueSmtp(String valueSmtp) {
+		this.valueSmtp = valueSmtp;
+	}
+	public String getMailPort() {
+		return mailPort;
+	}
+	public void setMailPort(String mailPort) {
+		this.mailPort = mailPort;
+	}
+	public String getSendUser() {
+		return sendUser;
+	}
+	public void setSendUser(String sendUser) {
+		this.sendUser = sendUser;
+	}
+	public String getSendPwd() {
+		return sendPwd;
+	}
+	public void setSendPwd(String sendPwd) {
+		this.sendPwd = sendPwd;
 	}
 
 
 
-	public String getVALUE_SMTP() {
-		return VALUE_SMTP;
-	}
-	public void setVALUE_SMTP(String vALUE_SMTP) {
-		VALUE_SMTP = vALUE_SMTP;
-	}
-	public String getMAIL_PORT() {
-		return MAIL_PORT;
-	}
-	public void setMAIL_PORT(String mAIL_PORT) {
-		MAIL_PORT = mAIL_PORT;
-	}
-	public String getSEND_USER() {
-		return SEND_USER;
-	}
-	public void setSEND_USER(String sEND_USER) {
-		SEND_USER = sEND_USER;
-	}
-	public String getSEND_PWD() {
-		return SEND_PWD;
-	}
-	public void setSEND_PWD(String sEND_PWD) {
-		SEND_PWD = sEND_PWD;
-	}
-	
-	
+
+
 	//--------------------------
 	/**邮件标题*/
 	private String headName; 
@@ -138,14 +138,12 @@ public class MailInfo {
 	
 	
 	public MailInfo(Boolean success, String msg,Integer error,Object data) {
-		super();
 		this.error = error;
 		this.msg = msg;
 		this.success = success;
 		this.data = data;
 	}
 	public MailInfo(Boolean success, String msg,Integer error) {
-		super();
 		this.error = error;
 		this.msg = msg;
 		this.success = success;
