@@ -36,6 +36,19 @@ public class SendmailUtil {
 	private Session session;
 
 	public SendmailUtil() {}
+	
+	
+	
+	/**
+	 * 发送
+	 * @param mailInfo
+	 * 				模板对象
+	 * @return
+	 */
+	public static MailInfo sendMail(MailInfo mailInfo){
+		
+		return new SendmailUtil(mailInfo).doSendHtmlEmail(mailInfo);
+	}
 
 	/*
 	 * 初始化方法
@@ -216,7 +229,9 @@ public class SendmailUtil {
 		}
 		return mailInfo;
 	}
-
+	
+	
+	
 	public static void main(String[] args) {
 		MailInfo mailInfo = new MailInfo();
 		mailInfo.setSEND_USER("xied@meyacom.com");
